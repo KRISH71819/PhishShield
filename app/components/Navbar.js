@@ -19,7 +19,7 @@ const Navbar = () => {
           Contact
         </Link>
         <a 
-          href="https://github.com" 
+          href="https://github.com/KRISH71819/PhishShield" 
           target="_blank" 
           rel="noopener noreferrer"
           className="hover:text-sky-400 transition-colors duration-200 z-10"
