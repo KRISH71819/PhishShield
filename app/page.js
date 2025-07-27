@@ -13,6 +13,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
+    if (!url) return;
     try {
       setLoading(true)
       const response = await fetch("/api/check-url", {
