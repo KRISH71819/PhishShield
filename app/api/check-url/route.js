@@ -1,15 +1,28 @@
 import { NextResponse } from "next/server";
+import dns from 'dns';
+import { promisify } from 'util';
+
+const lookup = promisify(dns.lookup);
 
 export async function POST(req) {
   try {
     const { url } = await req.json();
     const apikey = process.env.VIRUSTOTAL_API_KEY;
-    // const apiurl = `https://webrisk.googleapis.com/v1/uris:search?key=${apikey}&threatTypes=MALWARE&threatTypes=SOCIAL_ENGINEERING&threatTypes=UNWANTED_SOFTWARE&uri=${encodeURIComponent(url)}`;
 
     if (!apikey) {
       throw new Error("VirusTotal API key is not configured.");
     }
 
+    try {
+      let hostname = new URL(url).hostname;
+      await lookup(hostname);
+    } catch (dnsError) {
+      return NextResponse.json({
+        isSafe: "None",
+        message: "This website does not seem to exist. Please check the URL.",
+        data: null,
+      });
+    }
     const encodedUrl = Buffer.from(url).toString("base64").replace(/=/g, "");
     const apiurl = `https://www.virustotal.com/api/v3/urls/${encodedUrl}`;
 
@@ -21,7 +34,7 @@ export async function POST(req) {
 
     if (res.status === 404) {
       return NextResponse.json({
-        isSafe: true,
+        isSafe: "True",
         message: "This URL appears to be safe.",
         data: null,
       });
@@ -42,7 +55,7 @@ export async function POST(req) {
     const ismalicious = stats.malicious > 0 || stats.suspicious > 0;
 
     return NextResponse.json({
-      isSafe: !ismalicious,
+      isSafe: ismalicious ? "False" : "True",
       message: ismalicious
         ? "This URL is considered malicious."
         : "This URL appears to be safe.",
