@@ -106,7 +106,7 @@ export default function Home() {
               result.isSafe==="None" ? "border border-sky-500 bg-sky-500/20 shadow-sky-500/20" : (result.isSafe==="True"
                 ? "border border-green-500 bg-green-500/20 shadow-green-500/20"
                 : "border border-red-500 bg-red-500/20 shadow-red-500/20")
-            }`}
+            }`} 
           >
             <p className="relative text-xl font-semibold z-10">{result.message}</p>
           </div>
